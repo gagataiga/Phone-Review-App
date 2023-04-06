@@ -96,7 +96,8 @@ function setupServer () {
       !validScore(review.customer_service) ||
       !isNotEmpty(review.customer_review)
     ) {
-      return res.status(400).send("Invalid request.")
+      res.status(400).send("Invalid request.");
+      return;
     }
 
     // console.log(testEmail);
@@ -126,6 +127,22 @@ function setupServer () {
       
         res.status(200).send("Your review has been added.");
       }
+    }
+  });
+
+  app.get('/api/reviews', async (req, res) => {
+    const email = req.body;
+
+    if (!validEmail(email)) {
+      res.status(400).send("The email address provided was invalid.");
+      return;
+    }
+
+    const reviews = await review_detailModel.testEmail(email);
+    if (reviews.length > 0) {
+      res.status(200).send(reviews);
+    } else {
+      res.status(404).send("No reviews associated with the provided email address were found.");
     }
   });
   
