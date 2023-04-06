@@ -3,6 +3,22 @@ const router = express.Router();
 const review_detailModel = require('../model/review_detail.model');
 const { validEmail, isNotEmpty, isInteger, validScore } = require('../utils/inputValidation');
 
+router.get('/', async (req, res) => {
+  const email = req.body;
+
+  if (!validEmail(email)) {
+    res.status(400).send("The email address provided was invalid.");
+    return;
+  }
+
+  const reviews = await review_detailModel.testEmail(email);
+  if (reviews.length > 0) {
+    res.status(200).send(reviews);
+  } else {
+    res.status(404).send("No reviews associated with the provided email address were found.");
+  }
+});
+
 router.post('/', async (req,res) => {
   const review = req.body;
   const testEmail = await review_detailModel.testEmail(review.email);
