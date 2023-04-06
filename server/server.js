@@ -123,7 +123,7 @@ function setupServer () {
   });
 
   app.get('/api/reviews', async (req, res) => {
-    const email = req.body;
+    const { email } = req.body;
 
     if (!validEmail(email)) {
       res.status(400).send("The email address provided was invalid.");
