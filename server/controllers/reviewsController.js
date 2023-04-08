@@ -45,4 +45,9 @@ router.post('/', async (req,res) => {
   }
 });
 
+router.get('/:prviderIdOrName', async (req,res) => {
+  const numOfRecord = await review_detailModel.countNumOfReviews(2);
+  console.log('😆',numOfRecord);//[ { count: 'num' } ]
+})
+
 module.exports = router;

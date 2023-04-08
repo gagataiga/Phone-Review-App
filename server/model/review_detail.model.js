@@ -26,5 +26,11 @@ module.exports = {
     insertReview(review) {
         return knex(REVIEW_DETAIL_TABLE)
             .insert(review);
+    },
+    countNumOfReviews(providerId) {
+        return knex(REVIEW_DETAIL_TABLE)
+            .count('provider_id')
+            .where('provider_id', providerId)
+            .timeout(1500);
     }
 }
