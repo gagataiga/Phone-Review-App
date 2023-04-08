@@ -32,5 +32,13 @@ module.exports = {
             .count('provider_id')
             .where('provider_id', providerId)
             .timeout(1500);
+    },
+    getReviewInfobyLimitOffset(providerId, limit, offset) {
+        return knex(REVIEW_DETAIL_TABLE)
+            .select('reviewer_name', 'overall', 'ease_of_use', 'coverage','price', 'customer_service', 'customer_review')
+            .where('provider_id', providerId)
+            .limit(limit)
+            .offset(offset)
+            .timeout(1500);
     }
 }

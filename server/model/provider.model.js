@@ -25,5 +25,10 @@ module.exports = {
             .select('id')
             .where('name', providerName)
             .timeout(1500);
+    },
+    countNumOfProviders() {
+        return knex(PROVIDER_TABLE)
+            .count('id')
+            .timeout(1500);
     }
 }

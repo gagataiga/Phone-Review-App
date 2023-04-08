@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const review_detailModel = require('../model/review_detail.model');
+const providerModel = require('../model/provider.model');
 const { validEmail, isNotEmpty, isInteger, validScore } = require('../utils/inputValidation');
 
 router.post('/', async (req,res) => {
@@ -45,9 +46,72 @@ router.post('/', async (req,res) => {
   }
 });
 
-router.get('/:prviderIdOrName', async (req,res) => {
-  const numOfRecord = await review_detailModel.countNumOfReviews(2);
-  console.log('😆',numOfRecord);//[ { count: 'num' } ]
+router.get('/:providerIdOrName', async (req,res) => {
+  //check the number of providers
+  const arrayOfNumProviders = await providerModel.countNumOfProviders();
+  const numOfProviders = arrayOfNumProviders[0]['count'];
+
+  // check if providerIdOrName is id or name
+  let providerIdOrName = req.params.providerIdOrName;
+  let providerId;
+
+  if (isNaN(providerIdOrName)) {
+    let arrayOfId = await providerModel.getProviderIdByName(providerIdOrName);
+
+    if (arrayOfId.length === 0) {
+      return res.status(404).send("The provider does't exist in the review website.");
+    } else {
+      providerId = arrayOfId[0]['id'];
+    }
+  } else {
+    if (providerId > numOfProviders) {
+      return res.status(404).send("providerId not found");
+    } else {
+      providerId = Number(providerIdOrName);
+    }
+  }
+
+  // check how many reviews each provider has
+  const arrayOfNumReviews = await review_detailModel.countNumOfReviews(providerId);
+  const numOfReviews = arrayOfNumReviews[0]['count'];
+
+  let limit;
+  let offset;
+
+  // if there is "limit=?" in query parameter
+  if (req.query.limit) {
+    if (
+      parseInt(req.query.limit) <= 0 ||
+      parseInt(req.query.limit) > numOfReviews
+    ) {
+      return res.status(404).send("Index is out of range");
+    } else if (
+      parseInt(req.query.limit) > 0 ||
+      parseInt(req.query.limit) <= numOfReviews
+    ) {
+      limit = parseInt(req.query.limit);
+    }
+  } else {
+    limit = numOfReviews;
+  }
+   // if there is "offset=?" in query parameter
+  if (req.query.offset) {
+    if (
+      parseInt(req.query.offset) < 0 ||
+      parseInt(req.query.offset) > numOfReviews
+    ) {
+      return res.status(404).send("offset is out of range");
+    } else if (
+      parseInt(req.query.offset) >= 0 ||
+      parseInt(req.query.offset) <= numOfReviews
+    ) {
+      offset = parseInt(req.query.offset);
+    }
+  } else {
+    offset = 0;
+  }
+  let reviewInfo = await review_detailModel.getReviewInfobyLimitOffset(providerId, limit, offset);
+  res.status(200).send(reviewInfo);
 })
 
 module.exports = router;
