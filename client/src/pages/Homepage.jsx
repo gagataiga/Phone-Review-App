@@ -18,12 +18,12 @@ const Homepage = () => {
     const fetchedProviders = await axios.get('/api/providers');
     setProviders(fetchedProviders.data);
   }
-
+ 
   const navigate = useNavigate();
 
   return (
     <>
-      <Header 
+      <Header
         className="header" 
         text="Mobile Review Japan" 
         secondary_text="Grading the mobile providers in Japan">
@@ -32,7 +32,6 @@ const Homepage = () => {
       <div className="grid-container">
         {
           providers.map((provider) => {
-          
             return (
               <Card 
                 cardName={provider.name}
