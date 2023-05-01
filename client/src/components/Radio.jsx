@@ -26,7 +26,7 @@ const Radio = ( props ) => {
             {
             inputs.map((input, index) => {
                 return (
-                <>
+                <div key={index}>
                   <span className={className}>
                     {input.value}
                     <br />
@@ -44,7 +44,7 @@ const Radio = ( props ) => {
                     </input>
                     </label>
                     </span>
-                    </>
+                    </div>
                 )
             })
             

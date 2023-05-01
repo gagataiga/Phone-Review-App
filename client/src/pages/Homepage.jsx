@@ -1,53 +1,51 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import './Homepage.css';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Card from '../components/Card';
-
+import "./Homepage.css";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Card from "../components/Card";
 
 const Homepage = () => {
   const [providers, setProviders] = useState([]);
 
   useEffect(() => {
     getProviders();
-  },[])
+  }, []);
 
   async function getProviders() {
-    const fetchedProviders = await axios.get('/api/providers');
+    const fetchedProviders = await axios.get("/api/providers");
     setProviders(fetchedProviders.data);
   }
- 
+
   const navigate = useNavigate();
 
   return (
     <>
       <Header
-        className="header" 
-        text="Mobile Review Japan" 
-        secondary_text="Grading the mobile providers in Japan">
-      </Header>
+        className="header"
+        text="Mobile Review Japan"
+        secondary_text="Grading the mobile providers in Japan"
+      ></Header>
 
       <div className="grid-container">
-        {
-          providers.map((provider) => {
-            return (
-              <Card 
-                cardName={provider.name}
-                img_url={provider.img_url}
-                averageScore={provider.overall}
-                english_support={provider.english_support}
-                site_url={provider.site_url}
-                description={provider.description}
-                onClick={() => navigate('/' + provider.name)}
-                buttonClassName="button"
-              />
-            )
-          })
-        }
+        {providers.map((provider, index) => {
+          return (
+            <Card
+              cardName={provider.name}
+              img_url={provider.img_url}
+              averageScore={provider.overall}
+              english_support={provider.english_support}
+              site_url={provider.site_url}
+              description={provider.description}
+              onClick={() => navigate("/" + provider.name)}
+              buttonClassName="button"
+              key={index}
+            />
+          );
+        })}
       </div>
-      <Footer className="footer" text="© 2023 Phone Carrier Review App"/>
+      <Footer className="footer" text="© 2023 Phone Carrier Review App" />
     </>
   );
 };
